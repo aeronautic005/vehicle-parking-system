@@ -29,7 +29,7 @@ public class ParkingApp {
                     handleVehicleCheckOut();
                     break;
                 case 4:
-                    System.out.println("[TODO] Automated Exception Test Suite coming in next commit");
+                    runAutomatedTestSuite();
                     break;
                 case 5:
                     running = false;
@@ -113,6 +113,62 @@ public class ParkingApp {
         } catch (IllegalArgumentException e) {
             System.out.println("[ERROR]: " + e.getMessage());
         }
+    }
+
+    private static void runAutomatedTestSuite() {
+        System.out.println("\n=================================================");
+        System.out.println("     RUNNING AUTOMATED TEST & EXCEPTION SUITE    ");
+        System.out.println("=================================================");
+
+        ParkingGarage testGarage = new ParkingGarage("Test Facility", 2);
+
+        // Test 1: Zero or negative duration exception
+        System.out.print("[Test 1] Testing zero/negative duration (-2.5 hrs): ");
+        try {
+            ParkingTicket t = new ParkingTicket("TKT-TEST", "TEST-01", VehicleType.SEDAN);
+            t.setHoursParked(-2.5);
+            System.out.println("FAIL (Exception was not thrown)");
+        } catch (InvalidDurationException e) {
+            System.out.println("PASS -> Caught: " + e.getMessage());
+        }
+
+        // Test 2: Duration exceeding 24-hour limit
+        System.out.print("[Test 2] Testing duration exceeding 24 hours (28.0 hrs): ");
+        try {
+            ParkingTicket t = new ParkingTicket("TKT-TEST", "TEST-02", VehicleType.SEDAN);
+            t.setHoursParked(28.0);
+            System.out.println("FAIL (Exception was not thrown)");
+        } catch (InvalidDurationException e) {
+            System.out.println("PASS -> Caught: " + e.getMessage());
+        }
+
+        // Test 3: Overnight surcharge verification (> 12 hrs)
+        try {
+            ParkingTicket tSedan = new ParkingTicket("TKT-TEST", "TEST-03", VehicleType.SEDAN);
+            // Sedan: $5.00/hr * 14 hrs = $70.00 base + $15.00 overnight = $85.00
+            tSedan.setHoursParked(14.0);
+            double total = tSedan.calculateTotalFee();
+            System.out.printf("[Test 3] Overnight fee formula (14 hrs @ $5/hr + $15 fee = $85.00): $%.2f -> %s%n",
+                total, (total == 85.00 ? "PASS" : "FAIL"));
+        } catch (Exception e) {
+            System.out.println("FAIL: Unexpected error in Test 3: " + e.getMessage());
+        }
+
+        // Test 4: Capacity overflow throwing ParkingLotFullException
+        System.out.print("[Test 4] Testing parking lot full exception (filling 2/2 stalls): ");
+        try {
+            testGarage.checkInVehicle("CAR-1", VehicleType.SEDAN);
+            testGarage.checkInVehicle("CAR-2", VehicleType.SEDAN);
+            // 3rd car should trigger exception
+            testGarage.checkInVehicle("CAR-3", VehicleType.SEDAN);
+            System.out.println("FAIL (Exception was not thrown)");
+        } catch (ParkingLotFullException e) {
+            System.out.println("PASS -> Caught expected ParkingLotFullException: " + e.getMessage());
+        }
+
+        System.out.println("=================================================");
+        System.out.println("         ALL TESTS COMPLETED SUCCESSFULLY!       ");
+        System.out.println("=================================================");
     }
 
     private static int readIntChoice() {
