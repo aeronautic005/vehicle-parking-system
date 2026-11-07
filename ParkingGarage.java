@@ -6,6 +6,7 @@ public class ParkingGarage {
     private ParkingTicket[] stalls;
     private ArrayList<ParkingTicket> completedTransactions;
     private int ticketCounter = 1000;
+    private double totalRevenueCollected = 0.0;
 
     public ParkingGarage(String garageName, int totalStalls) {
         if (totalStalls <= 0) {
@@ -37,10 +38,10 @@ public class ParkingGarage {
         return totalStalls - getOccupiedStallCount();
     }
 
-    /**
-     * Attempts to check in a vehicle.
-     * Throws ParkingLotFullException if no slots are available.
-     */
+    public double getTotalRevenueCollected() {
+        return totalRevenueCollected;
+    }
+
     public ParkingTicket checkInVehicle(String licensePlate, VehicleType type) throws ParkingLotFullException {
         int emptySlot = -1;
         for (int i = 0; i < stalls.length; i++) {
@@ -63,5 +64,39 @@ public class ParkingGarage {
             (emptySlot + 1), licensePlate, type.getDisplayName(), ticketId);
 
         return ticket;
+    }
+
+    /**
+     * Checks out a vehicle by ticket ID, computes fees, prints receipt, and frees the stall.
+     */
+    public double checkOutVehicle(String ticketId, double hours) throws InvalidDurationException {
+        int slotIndex = -1;
+        for (int i = 0; i < stalls.length; i++) {
+            if (stalls[i] != null && stalls[i].getTicketId().equalsIgnoreCase(ticketId)) {
+                slotIndex = i;
+                break;
+            }
+        }
+
+        if (slotIndex == -1) {
+            throw new IllegalArgumentException("Ticket ID '" + ticketId + "' not found in active parking stalls.");
+        }
+
+        ParkingTicket ticket = stalls[slotIndex];
+        ticket.setHoursParked(hours);
+
+        double fee = ticket.calculateTotalFee();
+        totalRevenueCollected += fee;
+        completedTransactions.add(ticket);
+        stalls[slotIndex] = null; // Vacate slot
+
+        System.out.printf("[CHECK-OUT SUCCESS] Stall #%02d is now vacant.%n", (slotIndex + 1));
+        ticket.printReceipt();
+
+        return fee;
+    }
+
+    public ParkingTicket[] getActiveStalls() {
+        return stalls;
     }
 }
