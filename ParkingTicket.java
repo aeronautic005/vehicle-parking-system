@@ -59,4 +59,28 @@ public class ParkingTicket {
     public double calculateTotalFee() {
         return calculateBaseFee() + calculateOvernightSurcharge();
     }
+
+    public void printReceipt() {
+        System.out.println("==================================================");
+        System.out.println("              PARKING EXIT RECEIPT                ");
+        System.out.println("==================================================");
+        System.out.println("Ticket ID    : " + ticketId);
+        System.out.println("Plate Number : " + licensePlate);
+        System.out.println("Vehicle Type : " + vehicleType.getDisplayName());
+        System.out.printf("Duration     : %.2f Hours%n", hoursParked);
+        System.out.printf("Hourly Rate  : $%.2f / hr%n", vehicleType.getHourlyRate());
+        System.out.println("--------------------------------------------------");
+        System.out.printf("Base Parking : $%.2f%n", calculateBaseFee());
+        if (calculateOvernightSurcharge() > 0) {
+            System.out.printf("Overnight Fee: $%.2f (> %.0f hrs surcharge)%n", 
+                calculateOvernightSurcharge(), OVERNIGHT_THRESHOLD_HOURS);
+        }
+        System.out.printf("TOTAL CHARGE : $%.2f%n", calculateTotalFee());
+        System.out.println("==================================================");
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[%s] Plate: %s (%s)", ticketId, licensePlate, vehicleType.getDisplayName());
+    }
 }
