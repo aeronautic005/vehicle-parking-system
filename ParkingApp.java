@@ -23,10 +23,10 @@ public class ParkingApp {
                     garage.displayGarageFloorPlan();
                     break;
                 case 2:
-                    System.out.println("[TODO] Interactive Check-in feature coming in next commit");
+                    handleVehicleCheckIn();
                     break;
                 case 3:
-                    System.out.println("[TODO] Interactive Check-out feature coming in next commit");
+                    handleVehicleCheckOut();
                     break;
                 case 4:
                     System.out.println("[TODO] Automated Exception Test Suite coming in next commit");
@@ -65,6 +65,56 @@ public class ParkingApp {
         System.out.println("-------------------------------------------------");
     }
 
+    private static void handleVehicleCheckIn() {
+        System.out.println("\n--- VEHICLE CHECK-IN KIOSK ---");
+        System.out.print("Enter License Plate Number: ");
+        String plate = scanner.nextLine().trim();
+
+        System.out.println("Select Vehicle Type:");
+        VehicleType[] types = VehicleType.values();
+        for (int i = 0; i < types.length; i++) {
+            System.out.printf("%d. %s%n", (i + 1), types[i]);
+        }
+        System.out.print("Choice (1-" + types.length + "): ");
+        int typeIndex = readIntChoice();
+
+        if (typeIndex < 1 || typeIndex > types.length) {
+            System.out.println("[ERROR] Invalid vehicle category selected.");
+            return;
+        }
+
+        VehicleType selectedType = types[typeIndex - 1];
+
+        try {
+            garage.checkInVehicle(plate, selectedType);
+        } catch (ParkingLotFullException e) {
+            System.out.println("\n[CAUGHT ParkingLotFullException]: " + e.getMessage());
+            System.out.printf("  Occupancy Status: %d of %d stalls taken. Please seek alternate parking.%n",
+                e.getOccupiedSlots(), e.getTotalCapacity());
+        } catch (IllegalArgumentException e) {
+            System.out.println("[ERROR]: " + e.getMessage());
+        }
+    }
+
+    private static void handleVehicleCheckOut() {
+        System.out.println("\n--- VEHICLE CHECK-OUT & PAYMENT KIOSK ---");
+        System.out.print("Enter Ticket ID (e.g. TKT-1001): ");
+        String ticketId = scanner.nextLine().trim();
+
+        System.out.print("Enter Total Hours Parked (0.1 - 24.0): ");
+        double hours = readDouble();
+
+        try {
+            garage.checkOutVehicle(ticketId, hours);
+        } catch (InvalidDurationException e) {
+            System.out.println("\n[CAUGHT InvalidDurationException]: " + e.getMessage());
+            System.out.printf("  Attempted Input: %.2f hours | Valid Range: %.1f to %.1f hrs.%n",
+                e.getAttemptedHours(), e.getMinHours(), e.getMaxHours());
+        } catch (IllegalArgumentException e) {
+            System.out.println("[ERROR]: " + e.getMessage());
+        }
+    }
+
     private static int readIntChoice() {
         try {
             int val = scanner.nextInt();
@@ -73,6 +123,17 @@ public class ParkingApp {
         } catch (InputMismatchException e) {
             scanner.nextLine();
             return -1;
+        }
+    }
+
+    private static double readDouble() {
+        try {
+            double val = scanner.nextDouble();
+            scanner.nextLine();
+            return val;
+        } catch (InputMismatchException e) {
+            scanner.nextLine();
+            return -1.0;
         }
     }
 }
