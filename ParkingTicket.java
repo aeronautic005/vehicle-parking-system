@@ -10,6 +10,7 @@ public class ParkingTicket {
     private VehicleType vehicleType;
     private double hoursParked;
     private LocalDateTime entryTime;
+    private double discountRate = 0.0; // e.g. 0.10 for 10% loyalty discount
 
     public ParkingTicket(String ticketId, String licensePlate, VehicleType vehicleType) {
         if (ticketId == null || ticketId.trim().isEmpty()) {
@@ -53,6 +54,16 @@ public class ParkingTicket {
         return entryTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
+    public double getDiscountRate() {
+        return discountRate;
+    }
+
+    public void applyDiscount(double rate) {
+        if (rate >= 0.0 && rate <= 0.50) {
+            this.discountRate = rate;
+        }
+    }
+
     public void setHoursParked(double hours) throws InvalidDurationException {
         if (hours <= 0.0 || hours > 24.0) {
             throw new InvalidDurationException(hours, 0.1, 24.0, 
@@ -69,8 +80,16 @@ public class ParkingTicket {
         return (hoursParked > OVERNIGHT_THRESHOLD_HOURS) ? OVERNIGHT_SURCHARGE : 0.0;
     }
 
-    public double calculateTotalFee() {
+    public double calculateSubtotal() {
         return calculateBaseFee() + calculateOvernightSurcharge();
+    }
+
+    public double calculateDiscountAmount() {
+        return calculateSubtotal() * discountRate;
+    }
+
+    public double calculateTotalFee() {
+        return calculateSubtotal() - calculateDiscountAmount();
     }
 
     public void printReceipt() {
@@ -88,6 +107,9 @@ public class ParkingTicket {
         if (calculateOvernightSurcharge() > 0) {
             System.out.printf("Overnight Fee: $%.2f (> %.0f hrs surcharge)%n", 
                 calculateOvernightSurcharge(), OVERNIGHT_THRESHOLD_HOURS);
+        }
+        if (discountRate > 0) {
+            System.out.printf("VIP Discount : -$%.2f (%.0f%% off)%n", calculateDiscountAmount(), discountRate * 100);
         }
         System.out.printf("TOTAL CHARGE : $%.2f%n", calculateTotalFee());
         System.out.println("==================================================");
