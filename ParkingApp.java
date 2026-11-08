@@ -15,7 +15,7 @@ public class ParkingApp {
 
         while (running) {
             printMenu();
-            System.out.print("Enter choice (1-5): ");
+            System.out.print("Enter choice (1-7): ");
             int choice = readIntChoice();
 
             switch (choice) {
@@ -29,14 +29,20 @@ public class ParkingApp {
                     handleVehicleCheckOut();
                     break;
                 case 4:
-                    runAutomatedTestSuite();
+                    handleVehicleSearchByPlate();
                     break;
                 case 5:
+                    garage.displayTransactionHistory();
+                    break;
+                case 6:
+                    runAutomatedTestSuite();
+                    break;
+                case 7:
                     running = false;
                     System.out.println("\nThank you for choosing Metro Parking. Drive safely!");
                     break;
                 default:
-                    System.out.println("[ERROR] Invalid selection. Choose a number between 1 and 5.");
+                    System.out.println("[ERROR] Invalid selection. Choose a number between 1 and 7.");
             }
             System.out.println();
         }
@@ -50,6 +56,7 @@ public class ParkingApp {
             garage.checkInVehicle("XYZ-9988", VehicleType.SUV);
             garage.checkInVehicle("MOTO-555", VehicleType.MOTORCYCLE);
             garage.checkInVehicle("TRK-7711", VehicleType.TRUCK);
+            garage.checkInVehicle("ECO-2024", VehicleType.ELECTRIC_VEHICLE);
         } catch (ParkingLotFullException e) {
             System.out.println("[ERROR] Sample vehicle initialization failed: " + e.getMessage());
         }
@@ -60,8 +67,10 @@ public class ParkingApp {
         System.out.println("1. View Parking Garage Occupancy Floor Plan");
         System.out.println("2. Check-In Vehicle (Generate Ticket)");
         System.out.println("3. Check-Out Vehicle (Calculate Fee & Exit)");
-        System.out.println("4. Run Automated Exception & Rate Test Suite");
-        System.out.println("5. Exit");
+        System.out.println("4. Locate Vehicle by License Plate");
+        System.out.println("5. View Completed Transactions Ledger");
+        System.out.println("6. Run Automated Exception & Rate Test Suite");
+        System.out.println("7. Exit");
         System.out.println("-------------------------------------------------");
     }
 
@@ -104,14 +113,33 @@ public class ParkingApp {
         System.out.print("Enter Total Hours Parked (0.1 - 24.0): ");
         double hours = readDouble();
 
+        System.out.print("Is customer a VIP Member? (y/n): ");
+        String vipResp = scanner.nextLine().trim();
+        double discount = vipResp.equalsIgnoreCase("y") ? 0.15 : 0.0; // 15% VIP discount
+
         try {
-            garage.checkOutVehicle(ticketId, hours);
+            garage.checkOutVehicle(ticketId, hours, discount);
         } catch (InvalidDurationException e) {
             System.out.println("\n[CAUGHT InvalidDurationException]: " + e.getMessage());
             System.out.printf("  Attempted Input: %.2f hours | Valid Range: %.1f to %.1f hrs.%n",
                 e.getAttemptedHours(), e.getMinHours(), e.getMaxHours());
         } catch (IllegalArgumentException e) {
             System.out.println("[ERROR]: " + e.getMessage());
+        }
+    }
+
+    private static void handleVehicleSearchByPlate() {
+        System.out.println("\n--- LOCATE VEHICLE BY LICENSE PLATE ---");
+        System.out.print("Enter License Plate to Search: ");
+        String plate = scanner.nextLine().trim();
+
+        int stallIndex = garage.findStallByLicensePlate(plate);
+        if (stallIndex != -1) {
+            ParkingTicket t = garage.getActiveStalls()[stallIndex];
+            System.out.printf("[FOUND] Vehicle '%s' is parked in Stall #%02d! (Ticket: %s | Type: %s)%n",
+                plate, (stallIndex + 1), t.getTicketId(), t.getVehicleType().getDisplayName());
+        } else {
+            System.out.printf("[NOT FOUND] No vehicle with license plate '%s' is currently parked.%n", plate);
         }
     }
 
@@ -145,7 +173,6 @@ public class ParkingApp {
         // Test 3: Overnight surcharge verification (> 12 hrs)
         try {
             ParkingTicket tSedan = new ParkingTicket("TKT-TEST", "TEST-03", VehicleType.SEDAN);
-            // Sedan: $5.00/hr * 14 hrs = $70.00 base + $15.00 overnight = $85.00
             tSedan.setHoursParked(14.0);
             double total = tSedan.calculateTotalFee();
             System.out.printf("[Test 3] Overnight fee formula (14 hrs @ $5/hr + $15 fee = $85.00): $%.2f -> %s%n",
@@ -159,7 +186,6 @@ public class ParkingApp {
         try {
             testGarage.checkInVehicle("CAR-1", VehicleType.SEDAN);
             testGarage.checkInVehicle("CAR-2", VehicleType.SEDAN);
-            // 3rd car should trigger exception
             testGarage.checkInVehicle("CAR-3", VehicleType.SEDAN);
             System.out.println("FAIL (Exception was not thrown)");
         } catch (ParkingLotFullException e) {
