@@ -27,6 +27,19 @@ public enum VehicleType {
         return stallsRequired;
     }
 
+    /**
+     * Safely finds a VehicleType by enum name or partial display name case-insensitively.
+     */
+    public static VehicleType fromString(String text) {
+        if (text == null) return null;
+        for (VehicleType v : VehicleType.values()) {
+            if (v.name().equalsIgnoreCase(text.trim()) || v.displayName.toLowerCase().contains(text.toLowerCase().trim())) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return String.format("%s ($%.2f/hr, %d stall%s)", 
