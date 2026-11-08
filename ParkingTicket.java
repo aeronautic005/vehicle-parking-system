@@ -1,3 +1,6 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class ParkingTicket {
     public static final double OVERNIGHT_SURCHARGE = 15.00;
     public static final double OVERNIGHT_THRESHOLD_HOURS = 12.0;
@@ -6,6 +9,7 @@ public class ParkingTicket {
     private String licensePlate;
     private VehicleType vehicleType;
     private double hoursParked;
+    private LocalDateTime entryTime;
 
     public ParkingTicket(String ticketId, String licensePlate, VehicleType vehicleType) {
         if (ticketId == null || ticketId.trim().isEmpty()) {
@@ -22,6 +26,7 @@ public class ParkingTicket {
         this.licensePlate = licensePlate.trim().toUpperCase();
         this.vehicleType = vehicleType;
         this.hoursParked = 0.0;
+        this.entryTime = LocalDateTime.now();
     }
 
     public String getTicketId() {
@@ -38,6 +43,14 @@ public class ParkingTicket {
 
     public double getHoursParked() {
         return hoursParked;
+    }
+
+    public LocalDateTime getEntryTime() {
+        return entryTime;
+    }
+
+    public String getFormattedEntryTime() {
+        return entryTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     public void setHoursParked(double hours) throws InvalidDurationException {
@@ -67,6 +80,7 @@ public class ParkingTicket {
         System.out.println("Ticket ID    : " + ticketId);
         System.out.println("Plate Number : " + licensePlate);
         System.out.println("Vehicle Type : " + vehicleType.getDisplayName());
+        System.out.println("Entry Time   : " + getFormattedEntryTime());
         System.out.printf("Duration     : %.2f Hours%n", hoursParked);
         System.out.printf("Hourly Rate  : $%.2f / hr%n", vehicleType.getHourlyRate());
         System.out.println("--------------------------------------------------");
