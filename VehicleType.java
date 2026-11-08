@@ -2,7 +2,8 @@ public enum VehicleType {
     MOTORCYCLE(2.50, "Motorcycle / Scooter", 1),
     SEDAN(5.00, "Standard Sedan / Compact", 1),
     SUV(7.50, "Full-Size SUV / Minivan", 1),
-    TRUCK(12.00, "Commercial Truck / Bus", 2);
+    TRUCK(12.00, "Commercial Truck / Bus", 2),
+    ELECTRIC_VEHICLE(3.50, "Electric Vehicle (Eco-Rate)", 1);
 
     private final double hourlyRate;
     private final String displayName;
