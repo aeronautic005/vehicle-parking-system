@@ -140,18 +140,18 @@ public class ParkingGarage {
 
     public void displayGarageFloorPlan() {
         System.out.println("\n==================================================");
-        System.out.printf("  %s - STALL OCCUPANCY GRID%n", garageName.toUpperCase());
+        System.out.printf("  %s - FLOOR OCCUPANCY MAP%n", garageName.toUpperCase());
         System.out.println("==================================================");
-        System.out.printf("Capacity: %d | Occupied: %d | Vacant: %d | Revenue: $%.2f%n",
+        System.out.printf("Status: %d Total | %d Occupied | %d Vacant | Revenue: $%.2f%n",
             totalStalls, getOccupiedStallCount(), getAvailableStallCount(), totalRevenueCollected);
         System.out.println("--------------------------------------------------");
 
         for (int i = 0; i < stalls.length; i++) {
             if (stalls[i] == null) {
-                System.out.printf("[Stall %02d]: [ VACANT ]%n", (i + 1));
+                System.out.printf(" [ Stall #%02d ]: [  AVAILABLE  ]%n", (i + 1));
             } else {
                 ParkingTicket t = stalls[i];
-                System.out.printf("[Stall %02d]: [OCCUPIED] %s | %s (%s)%n",
+                System.out.printf(" [ Stall #%02d ]: [PARKED: %-8s] Plate: %-8s (%s)%n",
                     (i + 1), t.getTicketId(), t.getLicensePlate(), t.getVehicleType().name());
             }
         }
