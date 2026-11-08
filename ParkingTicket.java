@@ -94,7 +94,7 @@ public class ParkingTicket {
 
     public void printReceipt() {
         System.out.println("==================================================");
-        System.out.println("              PARKING EXIT RECEIPT                ");
+        System.out.println("            OFFICIAL PARKING EXIT RECEIPT         ");
         System.out.println("==================================================");
         System.out.println("Ticket ID    : " + ticketId);
         System.out.println("Plate Number : " + licensePlate);
@@ -111,7 +111,11 @@ public class ParkingTicket {
         if (discountRate > 0) {
             System.out.printf("VIP Discount : -$%.2f (%.0f%% off)%n", calculateDiscountAmount(), discountRate * 100);
         }
+        System.out.println("--------------------------------------------------");
         System.out.printf("TOTAL CHARGE : $%.2f%n", calculateTotalFee());
+        System.out.println("--------------------------------------------------");
+        System.out.println("   ||||| | |||| || ||||||| ||| |||| | ||| |||||   ");
+        System.out.println("               SCAN TO VALIDATE EXIT              ");
         System.out.println("==================================================");
     }
 
