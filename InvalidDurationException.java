@@ -1,4 +1,6 @@
 public class InvalidDurationException extends Exception {
+    private static final long serialVersionUID = 101L;
+
     private double attemptedHours;
     private double minHours;
     private double maxHours;
