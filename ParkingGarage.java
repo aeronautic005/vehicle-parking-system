@@ -127,6 +127,17 @@ public class ParkingGarage {
         System.out.println("==================================================");
     }
 
+    public void generateFinancialAuditReport() {
+        System.out.println("\n==================================================");
+        System.out.println("           GARAGE FINANCIAL AUDIT REPORT          ");
+        System.out.println("==================================================");
+        System.out.printf("Total Vehicles Serviced : %d%n", completedTransactions.size());
+        System.out.printf("Total Gross Revenue     : $%.2f%n", totalRevenueCollected);
+        double avg = completedTransactions.isEmpty() ? 0.0 : (totalRevenueCollected / completedTransactions.size());
+        System.out.printf("Average Fee Per Vehicle : $%.2f%n", avg);
+        System.out.println("==================================================");
+    }
+
     public void displayGarageFloorPlan() {
         System.out.println("\n==================================================");
         System.out.printf("  %s - STALL OCCUPANCY GRID%n", garageName.toUpperCase());
