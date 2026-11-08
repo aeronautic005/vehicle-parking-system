@@ -196,6 +196,29 @@ public class ParkingApp {
             System.out.println("PASS -> Caught expected ParkingLotFullException: " + e.getMessage());
         }
 
+        // Test 5: Electric Vehicle eco-rate check (4 hrs @ $3.50/hr = $14.00)
+        try {
+            ParkingTicket tEV = new ParkingTicket("TKT-EV", "TESLA-X", VehicleType.ELECTRIC_VEHICLE);
+            tEV.setHoursParked(4.0);
+            double evTotal = tEV.calculateTotalFee();
+            System.out.printf("[Test 5] EV Eco-rate formula (4 hrs @ $3.50 = $14.00): $%.2f -> %s%n",
+                evTotal, (evTotal == 14.00 ? "PASS" : "FAIL"));
+        } catch (Exception e) {
+            System.out.println("FAIL: Unexpected error in Test 5: " + e.getMessage());
+        }
+
+        // Test 6: VIP loyalty discount test (10 hrs @ $5 Sedan = $50, 20% discount = $40.00)
+        try {
+            ParkingTicket tVIP = new ParkingTicket("TKT-VIP", "VIP-111", VehicleType.SEDAN);
+            tVIP.setHoursParked(10.0);
+            tVIP.applyDiscount(0.20);
+            double vipTotal = tVIP.calculateTotalFee();
+            System.out.printf("[Test 6] VIP 20%% discount formula ($50 - 20%% = $40.00): $%.2f -> %s%n",
+                vipTotal, (vipTotal == 40.00 ? "PASS" : "FAIL"));
+        } catch (Exception e) {
+            System.out.println("FAIL: Unexpected error in Test 6: " + e.getMessage());
+        }
+
         System.out.println("=================================================");
         System.out.println("         ALL TESTS COMPLETED SUCCESSFULLY!       ");
         System.out.println("=================================================");
