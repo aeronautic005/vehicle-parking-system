@@ -15,7 +15,7 @@ public class ParkingApp {
 
         while (running) {
             printMenu();
-            System.out.print("Enter choice (1-7): ");
+            System.out.print("Enter choice (1-8): ");
             int choice = readIntChoice();
 
             switch (choice) {
@@ -35,14 +35,17 @@ public class ParkingApp {
                     garage.displayTransactionHistory();
                     break;
                 case 6:
-                    runAutomatedTestSuite();
+                    garage.generateFinancialAuditReport();
                     break;
                 case 7:
+                    runAutomatedTestSuite();
+                    break;
+                case 8:
                     running = false;
                     System.out.println("\nThank you for choosing Metro Parking. Drive safely!");
                     break;
                 default:
-                    System.out.println("[ERROR] Invalid selection. Choose a number between 1 and 7.");
+                    System.out.println("[ERROR] Invalid selection. Choose a number between 1 and 8.");
             }
             System.out.println();
         }
@@ -69,8 +72,9 @@ public class ParkingApp {
         System.out.println("3. Check-Out Vehicle (Calculate Fee & Exit)");
         System.out.println("4. Locate Vehicle by License Plate");
         System.out.println("5. View Completed Transactions Ledger");
-        System.out.println("6. Run Automated Exception & Rate Test Suite");
-        System.out.println("7. Exit");
+        System.out.println("6. Generate Financial & Revenue Audit Report");
+        System.out.println("7. Run Automated Exception & Rate Test Suite");
+        System.out.println("8. Exit");
         System.out.println("-------------------------------------------------");
     }
 
