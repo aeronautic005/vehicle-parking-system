@@ -67,6 +67,10 @@ public class ParkingGarage {
     }
 
     public double checkOutVehicle(String ticketId, double hours) throws InvalidDurationException {
+        return checkOutVehicle(ticketId, hours, 0.0);
+    }
+
+    public double checkOutVehicle(String ticketId, double hours, double discountRate) throws InvalidDurationException {
         int slotIndex = -1;
         for (int i = 0; i < stalls.length; i++) {
             if (stalls[i] != null && stalls[i].getTicketId().equalsIgnoreCase(ticketId)) {
@@ -81,6 +85,9 @@ public class ParkingGarage {
 
         ParkingTicket ticket = stalls[slotIndex];
         ticket.setHoursParked(hours);
+        if (discountRate > 0) {
+            ticket.applyDiscount(discountRate);
+        }
 
         double fee = ticket.calculateTotalFee();
         totalRevenueCollected += fee;
@@ -94,8 +101,18 @@ public class ParkingGarage {
     }
 
     /**
-     * Renders an interactive ASCII visualization of the garage floor stalls.
+     * Searches active stalls for a vehicle by license plate number.
      */
+    public int findStallByLicensePlate(String plate) {
+        if (plate == null) return -1;
+        for (int i = 0; i < stalls.length; i++) {
+            if (stalls[i] != null && stalls[i].getLicensePlate().equalsIgnoreCase(plate.trim())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void displayGarageFloorPlan() {
         System.out.println("\n==================================================");
         System.out.printf("  %s - STALL OCCUPANCY GRID%n", garageName.toUpperCase());
