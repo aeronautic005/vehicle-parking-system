@@ -100,9 +100,6 @@ public class ParkingGarage {
         return fee;
     }
 
-    /**
-     * Searches active stalls for a vehicle by license plate number.
-     */
     public int findStallByLicensePlate(String plate) {
         if (plate == null) return -1;
         for (int i = 0; i < stalls.length; i++) {
@@ -111,6 +108,23 @@ public class ParkingGarage {
             }
         }
         return -1;
+    }
+
+    public void displayTransactionHistory() {
+        System.out.println("\n==================================================");
+        System.out.println("           COMPLETED TRANSACTIONS LEDGER          ");
+        System.out.println("==================================================");
+        if (completedTransactions.isEmpty()) {
+            System.out.println("No completed check-out transactions on record.");
+        } else {
+            for (int i = 0; i < completedTransactions.size(); i++) {
+                ParkingTicket t = completedTransactions.get(i);
+                System.out.printf("%2d. [%s] Plate: %-9s | Type: %-15s | %.1f hrs | Paid: $%.2f%n",
+                    (i + 1), t.getTicketId(), t.getLicensePlate(), t.getVehicleType().name(),
+                    t.getHoursParked(), t.calculateTotalFee());
+            }
+        }
+        System.out.println("==================================================");
     }
 
     public void displayGarageFloorPlan() {
