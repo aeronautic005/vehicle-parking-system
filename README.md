@@ -1,16 +1,44 @@
 # Automated Vehicle Parking & Rental Billing System
 
-An Object-Oriented Java application simulating an intelligent multi-tiered parking garage facility. Features include enumerated vehicle categories, custom business logic exceptions, capacity tracking, dynamic fee formulas with overnight surcharges, and interactive kiosk ticketing.
+An enterprise-ready Object-Oriented Java application simulating an intelligent multi-tiered parking garage facility. Features include enumerated vehicle categories, custom business logic exceptions, capacity tracking, dynamic fee formulas with overnight surcharges, and interactive kiosk ticketing.
 
-## Architecture & Concepts
+## System Architecture
 
-- **Enums (`VehicleType.java`):** Enumerates vehicle classifications (`MOTORCYCLE`, `SEDAN`, `SUV`, `TRUCK`) encapsulated with hourly rates and stall space coefficients.
-- **Custom Exceptions:**
-  - `InvalidDurationException.java`: Enforces realistic parking duration constraints (0 < hours <= 24).
-  - `ParkingLotFullException.java`: Thrown when facility capacity is exhausted.
-- **Ticketing Model (`ParkingTicket.java`):** Encapsulates ticket IDs, license plates, timestamps, and calculates exact billing breakdowns.
-- **Garage Manager (`ParkingGarage.java`):** Tracks slot availability, processes vehicle check-ins/check-outs, and calculates tiered rates with overnight fees.
-- **Driver Program (`ParkingApp.java`):** Interactive kiosk CLI with garage occupancy visualizations and automated boundary test suite.
+```text
++--------------------------------------------------------------------------+
+|                               ParkingApp                                 |
+|                       (CLI Kiosk & Interactive UI)                       |
++------------------------------------+-------------------------------------+
+                                     |
+                                     v
++--------------------------------------------------------------------------+
+|                             ParkingGarage                                |
+|         (Capacity Management, Slot Grid, Financial Aggregates)           |
++------------------+-----------------------------------+-------------------+
+                   |                                   |
+                   v                                   v
+        +--------------------+              +--------------------+
+        |   ParkingTicket    |              |    VehicleType     |
+        | (Pricing & Receipt)|              |   (Rates & Enums)  |
+        +---------+----------+              +--------------------+
+                  |
+        +---------+---------------------------------+
+        |                                           |
+        v                                           v
++-------------------------------+   +-------------------------------+
+|   InvalidDurationException    |   |    ParkingLotFullException    |
+| (Validation for 0 < hrs <= 24)|   |  (Capacity Exhaustion Event)  |
++-------------------------------+   +-------------------------------+
+```
+
+## Pricing & Rate Sheet
+
+| Vehicle Category | Hourly Rate | Stall Footprint | Overnight Surcharge (> 12 hrs) |
+| :--- | :---: | :---: | :---: |
+| **Motorcycle / Scooter** | $2.50 | 1 Stall | +$15.00 flat fee |
+| **Sedan / Compact** | $5.00 | 1 Stall | +$15.00 flat fee |
+| **Full-Size SUV** | $7.50 | 1 Stall | +$15.00 flat fee |
+| **Commercial Truck / Bus** | $12.00 | 2 Stalls | +$15.00 flat fee |
 
 ## How to Compile & Run
 
